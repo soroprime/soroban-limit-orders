@@ -1,0 +1,15 @@
+[package]
+name = "limit_order_tests"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+crate-type = ["lib"]
+
+[dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
+limit_order = { path = "../limit_order", features = ["testutils"] }
+mock_dex = { path = "../mock_dex", features = ["testutils"] }

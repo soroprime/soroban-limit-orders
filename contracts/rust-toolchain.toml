@@ -1,0 +1,8 @@
+# Soroban contracts are built with the locally installed stable toolchain
+# (currently 1.96.0), which satisfies the MSRV of soroban-sdk 28 (>= 1.91).
+# soroban-sdk 28 requires the wasm32v1-none target (Rust 1.84+); the legacy
+# wasm32-unknown-unknown target is rejected by its build script on 1.82+.
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32v1-none"]
