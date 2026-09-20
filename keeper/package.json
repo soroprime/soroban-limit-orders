@@ -1,0 +1,16 @@
+{
+  "name": "@soroban-limit-orders/keeper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Keeper bot for the Soroban Limit Order Protocol",
+  "scripts": {
+    "build": "echo \"keeper: no build yet\"",
+    "test": "echo \"keeper: no tests yet\"",
+    "lint": "echo \"keeper: no lint yet\"",
+    "dev": "echo \"keeper: run via docker-compose\"",
+    "start": "echo \"keeper: not implemented yet\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@soroban-limit-orders/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js trading interface for the Soroban Limit Order Protocol",
+  "scripts": {
+    "build": "echo \"frontend: no build yet\"",
+    "test": "echo \"frontend: no tests yet\"",
+    "lint": "echo \"frontend: no lint yet\"",
+    "dev": "echo \"frontend: run via docker-compose\"",
+    "start": "echo \"frontend: not implemented yet\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

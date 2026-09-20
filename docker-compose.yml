@@ -1,0 +1,35 @@
+services:
+  orderbook:
+    build:
+      context: ./orderbook
+      dockerfile: Dockerfile
+    container_name: soroban-order-book
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  keeper:
+    build:
+      context: ./keeper
+      dockerfile: Dockerfile
+    container_name: soroban-keeper
+    depends_on:
+      - orderbook
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: soroban-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - orderbook
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -1,0 +1,27 @@
+{
+  "name": "soroban-limit-orders",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo for the Soroban Limit Order Protocol",
+  "workspaces": [
+    "keeper",
+    "orderbook",
+    "sdk",
+    "frontend",
+    "indexer"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "dev": "docker-compose up",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\" \"!frontend/**\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@soroban-limit-orders/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript SDK for the Soroban Limit Order Protocol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "echo \"sdk: no build yet\"",
+    "test": "echo \"sdk: no tests yet\"",
+    "lint": "echo \"sdk: no lint yet\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

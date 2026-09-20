@@ -1,0 +1,16 @@
+{
+  "name": "@soroban-limit-orders/orderbook",
+  "version": "0.1.0",
+  "private": true,
+  "description": "REST + WebSocket order book service for the Soroban Limit Order Protocol",
+  "scripts": {
+    "build": "echo \"orderbook: no build yet\"",
+    "test": "echo \"orderbook: no tests yet\"",
+    "lint": "echo \"orderbook: no lint yet\"",
+    "dev": "echo \"orderbook: run via docker-compose\"",
+    "start": "echo \"orderbook: not implemented yet\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

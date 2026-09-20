@@ -1,0 +1,16 @@
+{
+  "name": "@soroban-limit-orders/indexer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Horizon indexer for the Soroban Limit Order Protocol",
+  "scripts": {
+    "build": "echo \"indexer: no build yet\"",
+    "test": "echo \"indexer: no tests yet\"",
+    "lint": "echo \"indexer: no lint yet\"",
+    "dev": "echo \"indexer: run via docker-compose\"",
+    "start": "echo \"indexer: not implemented yet\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

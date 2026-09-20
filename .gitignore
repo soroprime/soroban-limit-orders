@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Rust
+target/
+**/target/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Runtime data
+*.db
+*.db-journal
+*.sqlite
+
+# Blockchain artifacts
+*.wasm
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Coverage
+coverage/
+.nyc_output/

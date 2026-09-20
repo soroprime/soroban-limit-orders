@@ -1,0 +1,6 @@
+packages:
+  - keeper
+  - orderbook
+  - sdk
+  - frontend
+  - indexer
