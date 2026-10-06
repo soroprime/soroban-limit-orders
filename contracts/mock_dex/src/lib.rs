@@ -1,14 +1,16 @@
 #![no_std]
 
-//! Mock DEX contract.
-//!
-//! A minimal DEX used only by integration tests. It stores a configurable
-//! exchange rate per (token_in, token_out) pair and simulates swaps without
-//! moving any tokens.
+use soroban_sdk::{contract, contractimpl, Address, Env, contractclient};
 
 mod pool;
 
-use soroban_sdk::{contract, contractimpl, Address, Env};
+#[contractclient(name = "Client")]
+pub trait MockDexTrait {
+    fn init(env: Env, admin: Address);
+    fn set_price(env: Env, token_in: Address, token_out: Address, rate: i128);
+    fn swap(env: Env, token_in: Address, token_out: Address, amount_in: i128) -> i128;
+    fn get_quote(env: Env, token_in: Address, token_out: Address, amount_in: i128) -> i128;
+}
 
 pub use crate::pool::DataKey;
 

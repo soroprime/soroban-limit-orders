@@ -1,51 +1,57 @@
 #![no_std]
 
-//! Limit Order settlement contract.
-//!
-//! Stateless for orders: it only verifies the maker signature, enforces
-//! expiry/replay rules, executes the swap on a DEX and distributes funds.
-//! Day 1 lands the `Order` model, error types and the entry-point skeleton;
-//! the settlement flow itself is implemented over the following days.
+use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, Vec, contractclient};
 
+mod cancellation;
+pub mod events;
 mod errors;
+mod fee;
 mod order;
-
-use soroban_sdk::{contract, contractimpl, Address, BytesN, Env};
+mod settlement;
+mod signature;
+mod storage;
+mod token;
 
 pub use crate::errors::ContractError;
+pub use crate::events::{OrderCancelledEvent, OrderExpiredEvent, OrderFilledEvent};
 pub use crate::order::{order_hash, Order, OrderType};
 
-/// The Limit Order settlement contract.
+#[contractclient(name = "Client")]
+pub trait LimitOrderTrait {
+    fn settle(env: Env, order: Order, signature: BytesN<64>, dex_address: Address) -> Result<i128, ContractError>;
+    fn cancel(env: Env, maker: Address, nonce: u64) -> Result<(), ContractError>;
+    fn batch_cancel(env: Env, maker: Address, nonces: Vec<u64>) -> Result<(), ContractError>;
+    fn is_filled(env: Env, maker: Address, nonce: u64) -> bool;
+    fn is_cancelled(env: Env, maker: Address, nonce: u64) -> bool;
+    fn simulate_settlement(env: Env, order: Order) -> Result<i128, ContractError>;
+}
+
 #[contract]
 pub struct LimitOrder;
 
 #[contractimpl]
 impl LimitOrder {
-    /// Execute a signed order on behalf of `order.maker`.
-    ///
-    /// Called by keeper bots. The complete flow (signature verification,
-    /// expiry/nonce checks, keeper-fee deduction, DEX swap, fund distribution,
-    /// nonce marking and event emission) is implemented on Day 2.
-    pub fn settle(env: Env, order: Order, signature: BytesN<64>, dex_address: Address) {
-        let _ = (&env, &order, &signature, &dex_address);
-        todo!("settle() implemented on Day 2")
+    pub fn settle(env: Env, order: Order, signature: BytesN<64>, dex_address: Address) -> Result<i128, ContractError> {
+        settlement::settle(env, order, signature, dex_address)
     }
 
-    /// Cancel a pending order. Only callable by `maker`.
-    pub fn cancel(env: Env, maker: Address, nonce: u64) {
-        let _ = (&env, &maker, &nonce);
-        todo!("cancel() implemented on Day 2")
+    pub fn cancel(env: Env, maker: Address, nonce: u64) -> Result<(), ContractError> {
+        cancellation::cancel(env, maker, nonce)
     }
 
-    /// Returns `true` if `(maker, nonce)` has been filled or cancelled.
+    pub fn batch_cancel(env: Env, maker: Address, nonces: Vec<u64>) -> Result<(), ContractError> {
+        cancellation::batch_cancel(env, maker, nonces)
+    }
+
     pub fn is_filled(env: Env, maker: Address, nonce: u64) -> bool {
-        let _ = (&env, &maker, &nonce);
-        todo!("is_filled() implemented on Day 2")
+        storage::is_filled(&env, &maker, nonce)
     }
 
-    /// Read-only estimate of the `token_out` amount a settlement would deliver.
-    pub fn simulate_settlement(env: Env, order: Order) -> i128 {
-        let _ = (&env, &order);
-        todo!("simulate_settlement() implemented on Day 2")
+    pub fn is_cancelled(env: Env, maker: Address, nonce: u64) -> bool {
+        storage::is_cancelled(&env, &maker, nonce)
+    }
+
+    pub fn simulate_settlement(env: Env, order: Order) -> Result<i128, ContractError> {
+        settlement::simulate_settlement(env, order)
     }
 }
