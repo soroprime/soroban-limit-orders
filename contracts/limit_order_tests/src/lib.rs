@@ -1,4 +1,8 @@
-//! Integration test crate for the Soroban Limit Order Protocol.
-//!
-//! Test files land in later development days; this crate exists so the
-//! workspace builds as a whole.
+mod helpers;
+
+mod cancellation_test;
+mod expiry_test;
+mod keeper_fee_test;
+mod replay_test;
+mod settlement_test;
+mod signature_test;
