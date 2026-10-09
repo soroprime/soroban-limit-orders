@@ -3,10 +3,12 @@
 use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, Vec, contractclient};
 
 mod cancellation;
+pub mod dex;
 pub mod events;
 mod errors;
 mod fee;
 mod order;
+mod router;
 mod settlement;
 mod signature;
 mod storage;

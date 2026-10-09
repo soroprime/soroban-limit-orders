@@ -1,5 +1,6 @@
 use soroban_sdk::{
     testutils::{Address as _, Ledger, LedgerInfo},
+    token::{StellarAssetClient, TokenClient},
     Address, BytesN, Env,
 };
 
@@ -14,6 +15,8 @@ pub struct TestEnv {
     pub token_out: Address,
     pub dex: Address,
     pub contract: Address,
+    /// Admin of the mock DEX — used in multi-DEX tests to set rates.
+    pub dex_admin: Address,
 }
 
 impl TestEnv {
@@ -21,25 +24,11 @@ impl TestEnv {
         let env = Env::default();
         env.mock_all_auths();
 
-        let maker = Address::generate(&env);
-        let keeper = Address::generate(&env);
-        let token_in = Address::generate(&env);
-        let token_out = Address::generate(&env);
-
-        let dex = env.register_contract(None, mock_dex::MockDex);
-        MockDexClient::new(&env, &dex).init(&env.current_contract_address());
-        MockDexClient::new(&env, &dex).set_price(&token_in, &token_out, &1_000_000);
-
-        let contract = env.register_contract(None, limit_order::LimitOrder);
-
-        let token_in_client = token::Client::new(&env, &token_in);
-        let token_out_client = token::Client::new(&env, &token_out);
-        token_in_client.mint(&maker, &100_000);
-        token_out_client.mint(&contract, &100_000);
-
+        // ── Set protocol version FIRST ──────────────────────────────────────
+        // soroban-sdk 28 requires protocol_version ≥ 28 before any host calls.
         env.ledger().set(LedgerInfo {
             timestamp: 1_000_000,
-            protocol_version: 22,
+            protocol_version: 28,
             sequence_number: 1,
             network_id: Default::default(),
             base_reserve: 10,
@@ -48,18 +37,43 @@ impl TestEnv {
             min_temp_entry_ttl: 100,
         });
 
-        TestEnv {
-            env,
-            maker,
-            keeper,
-            token_in,
-            token_out,
-            dex,
-            contract,
-        }
+        // ── Addresses ───────────────────────────────────────────────────────
+        // Address::generate in soroban-sdk 28 testutils produces a contract
+        // address, which can hold SAC balances without a trustline.
+        let maker = Address::generate(&env);
+        let keeper = Address::generate(&env);
+
+        // ── SAC tokens ──────────────────────────────────────────────────────
+        let sac_in  = env.register_stellar_asset_contract_v2(Address::generate(&env));
+        let sac_out = env.register_stellar_asset_contract_v2(Address::generate(&env));
+        let token_in  = sac_in.address();
+        let token_out = sac_out.address();
+
+        // ── Mock DEX ────────────────────────────────────────────────────────
+        let dex_admin = Address::generate(&env);
+        let dex = env.register_contract(None, mock_dex::MockDex);
+        MockDexClient::new(&env, &dex).init(&dex_admin);
+        MockDexClient::new(&env, &dex).set_price(&token_in, &token_out, &1_000_000i128);
+
+        // ── Settlement contract ─────────────────────────────────────────────
+        let contract = env.register_contract(None, limit_order::LimitOrder);
+
+        // ── Fund accounts ───────────────────────────────────────────────────
+        StellarAssetClient::new(&env, &token_in).mint(&maker, &100_000i128);
+        // The contract needs token_out so it can deliver it to the maker.
+        StellarAssetClient::new(&env, &token_out).mint(&contract, &100_000i128);
+
+        TestEnv { env, maker, keeper, token_in, token_out, dex, contract, dex_admin }
     }
 
-    pub fn create_order(&self, nonce: u64, amount_in: i128, keeper_fee: i128, min_amount_out: i128, expiry: u64) -> (Order, BytesN<64>) {
+    pub fn create_order(
+        &self,
+        nonce: u64,
+        amount_in: i128,
+        keeper_fee: i128,
+        min_amount_out: i128,
+        expiry: u64,
+    ) -> (Order, BytesN<64>) {
         let order = Order {
             maker: self.maker.clone(),
             token_in: self.token_in.clone(),
@@ -71,22 +85,21 @@ impl TestEnv {
             keeper_fee,
             preferred_dex: None,
         };
-        let _hash = limit_order::order_hash(&self.env, &order);
+        // Signature verification is gated behind cfg(not(feature="testutils"));
+        // with the testutils feature active the check is a no-op, so any bytes work.
         let signature = BytesN::from_array(&self.env, &[0u8; 64]);
         (order, signature)
     }
 
     pub fn create_signed_order(&self, nonce: u64) -> (Order, BytesN<64>) {
+        // amount_in=1000, keeper_fee=10, rate=1_000_000 (1:1)
+        // → swap_amount = 990 → mock_dex returns 990
+        // min_amount_out=900 → slippage check passes
         self.create_order(nonce, 1000, 10, 900, u64::MAX)
     }
-}
 
-mod token {
-    use soroban_sdk::{contractclient, Address, Env};
-
-    #[contractclient(name = "Client")]
-    pub trait Token {
-        fn mint(env: Env, to: Address, amount: i128);
-        fn balance(env: Env, id: Address) -> i128;
+    /// Query token balance for an address.
+    pub fn balance_of(&self, token: &Address, who: &Address) -> i128 {
+        TokenClient::new(&self.env, token).balance(who)
     }
 }

@@ -8,6 +8,9 @@ fn test_settlement_happy_path() {
 
     let contract = limit_order::Client::new(&test_env.env, &test_env.contract);
     let result = contract.try_settle(&order, &signature, &test_env.dex);
+    if let Err(ref e) = result {
+        panic!("invoke error: {:?}", e);
+    }
     assert!(result.is_ok());
     let inner = result.unwrap();
     assert!(inner.is_ok());
