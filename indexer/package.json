@@ -3,12 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "description": "Horizon indexer for the Soroban Limit Order Protocol",
+  "main": "dist/main.js",
   "scripts": {
-    "build": "echo \"indexer: no build yet\"",
-    "test": "echo \"indexer: no tests yet\"",
-    "lint": "echo \"indexer: no lint yet\"",
-    "dev": "echo \"indexer: run via docker-compose\"",
-    "start": "echo \"indexer: not implemented yet\""
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node src/main.ts",
+    "start": "node dist/main.js",
+    "test": "jest --forceExit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "12.0.0",
+    "axios": "1.6.7",
+    "knex": "3.1.0",
+    "better-sqlite3": "11.6.0",
+    "pg": "8.11.3",
+    "pino": "8.17.2",
+    "zod": "3.22.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "11.0.0",
+    "@types/jest": "29.5.11",
+    "@types/node": "20.11.5",
+    "@types/pg": "8.10.9",
+    "jest": "29.7.0",
+    "ts-jest": "29.1.2",
+    "ts-node": "10.9.2",
+    "typescript": "5.3.3"
   },
   "engines": {
     "node": ">=20"
