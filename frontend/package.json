@@ -19,7 +19,7 @@
     "@radix-ui/react-tabs": "1.0.4",
     "@radix-ui/react-toast": "1.1.5",
     "@radix-ui/react-tooltip": "1.0.7",
-    "@stellar/freighter-api": "2.0.0",
+    "@stellar/freighter-api": "6.0.1",
     "@soroban-limit-orders/sdk": "workspace:*",
     "@tanstack/react-query": "5.17.19",
     "class-variance-authority": "0.7.0",
