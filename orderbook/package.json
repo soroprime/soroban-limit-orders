@@ -3,12 +3,42 @@
   "version": "0.1.0",
   "private": true,
   "description": "REST + WebSocket order book service for the Soroban Limit Order Protocol",
+  "main": "dist/main.js",
   "scripts": {
-    "build": "echo \"orderbook: no build yet\"",
-    "test": "echo \"orderbook: no tests yet\"",
-    "lint": "echo \"orderbook: no lint yet\"",
-    "dev": "echo \"orderbook: run via docker-compose\"",
-    "start": "echo \"orderbook: not implemented yet\""
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node src/main.ts",
+    "start": "node dist/main.js",
+    "test": "jest --forceExit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "express": "4.18.2",
+    "express-rate-limit": "7.1.5",
+    "knex": "3.1.0",
+    "better-sqlite3": "11.6.0",
+    "pg": "8.11.3",
+    "pino": "8.17.2",
+    "pino-http": "9.0.0",
+    "tweetnacl": "1.0.3",
+    "uuid": "9.0.1",
+    "ws": "8.16.0",
+    "zod": "3.22.4",
+    "node-cron": "3.0.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "11.0.0",
+    "@types/express": "4.17.21",
+    "@types/node": "20.11.5",
+    "@types/pg": "8.10.9",
+    "@types/supertest": "6.0.2",
+    "@types/uuid": "9.0.7",
+    "@types/ws": "8.5.10",
+    "@types/node-cron": "3.0.11",
+    "jest": "29.7.0",
+    "supertest": "6.3.4",
+    "ts-jest": "29.1.2",
+    "ts-node": "10.9.2",
+    "typescript": "5.3.3"
   },
   "engines": {
     "node": ">=20"
